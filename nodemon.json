@@ -1,0 +1,16 @@
+{
+  "watch": ["src", "server.ts"],
+  "ext": "ts",
+  "exec": "ts-node -r tsconfig-paths/register server.ts",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ignore": [
+    "dist",
+    "node_modules",
+    "coverage",
+    "*.test.ts",
+    "*.spec.ts"
+  ],
+  "delay": 200
+}
