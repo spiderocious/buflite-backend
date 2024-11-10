@@ -1,5 +1,6 @@
-import { randomBytes, randomUUID } from 'crypto';
+import { randomBytes, randomUUID, createHash } from 'crypto';
 import { customAlphabet } from 'nanoid';
+import { normalizeContent } from './helpers';
 
 /**
  * ID Generation Utilities
@@ -164,3 +165,15 @@ export const ID_PATTERNS = {
   ALPHANUMERIC: /^[A-Z0-9]+$/,
   PREFIXED: /^[A-Z]+_[A-Z0-9]+$/,
 } as const;
+
+/**
+ * Generate a cache key for content analysis
+ * Creates a consistent MD5 hash from normalized content and platform
+ */
+export function generateCacheKey(content: string, platform: string): string {
+  // Normalize content for consistent hashing
+  const normalizedContent = normalizeContent(content);
+  const input = `${normalizedContent}|${platform.toLowerCase()}`;
+
+  return createHash('md5').update(input, 'utf8').digest('hex');
+}

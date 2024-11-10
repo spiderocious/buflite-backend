@@ -104,7 +104,6 @@ class CacheService implements ICacheService {
     if (!this.enabled) {
       return false;
     }
-
     try {
       const ttl = options?.expiresIn || config.cache.defaultTTL;
       

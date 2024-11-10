@@ -463,3 +463,18 @@ export const isDateInRange = (date: Date, range: DateRange): boolean => {
 export const getDateRangeDuration = (range: DateRange): number => {
   return range.end.getTime() - range.start.getTime();
 };
+
+/**
+ * Content normalization utility for consistent caching
+ * Normalizes content text for consistent hashing across different inputs
+ */
+export function normalizeContent(content: string): string {
+  return content
+    .trim() // Remove leading/trailing whitespace
+    .toLowerCase() // Convert to lowercase
+    .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
+    .replace(/['']/g, "'") // Normalize smart quotes to regular quotes
+    .replace(/[""]/g, '"') // Normalize smart quotes to regular quotes
+    .replace(/…/g, '...') // Normalize ellipsis
+    .normalize('NFC'); // Unicode normalization
+}

@@ -1,55 +1,69 @@
-import { CacheService } from '@/services/core/cache';
 import { Request, Response } from 'express';
 import { AnthropicService } from '../services/core/ai/anthropic/anthropic.service';
+import { trialLimitService } from '../services/trialLimit.service';
 import { ErrorResponse, SuccessResponse } from '../utils/response';
 
 const contentService = new AnthropicService();
 
-export async function analyzeContent(req: any, res: Response) {
-  const { content } = req.body;
-  const userId = req.userId || 'anonymous';
-  const contentTriesKey = userId + '-content-tries';
-  const contentTrialLimit = Number(process.env.CONTENT_TRIAL_LIMIT) || 5;
-  const contentTries = CacheService.getCacheInfo(contentTriesKey)?.value || 0;
-  console.log('Content tries:', contentTries, contentTriesKey);
-  if (contentTries >= contentTrialLimit) {
-    return ErrorResponse(
-      res,
-      `You have reached the content analysis limit of ${contentTrialLimit} tries, Limits are reset every 24 hours.`
-    );
-  }
+export async function analyzeContent(req: Request, res: Response) {
+  const { content, type } = req.body;
+  const contentType = type || 'post'; // can be video
+  const userId = (req as any).userId || 'anonymous';
 
+  // Input validation
   if (!content) {
     return ErrorResponse(res, 'Content is required for analysis');
   } else if (content.length < 20) {
     return ErrorResponse(res, 'Content must be at least 20 characters long');
-  } else if (content.length > 500) {
-    return ErrorResponse(res, 'Content must not exceed 500 characters');
+  } else if (content.length > 10000) {
+    return ErrorResponse(res, 'Content must not exceed 10000 characters');
   }
 
-  let contentKey =
-    content.length > 40 ? `${content.slice(0, 20)}...${content.slice(-20)}` : content;
-  //replace all non-alphanumeric characters with a dash. amd all spaces with a dash
-  contentKey = contentKey.replace(/[^a-zA-Z0-9]+/g, '-').replace(/\s+/g, '-');
-  contentKey = contentKey.toLowerCase();
-
-  const info = CacheService.getCacheInfo(contentKey);
-  console.log('derived content key:', contentKey);
-  console.log('Cache info:', info);
-  if (info) {
-    // If cache info exists, use it
-    return SuccessResponse(res, 'Content analysis successful', info?.value);
+  // Check trial limits
+  if (trialLimitService.checkLimit(userId, contentType)) {
+    const trialLimit = trialLimitService.getTrialLimit();
+    return ErrorResponse(
+      res,
+      `You have reached the content analysis limit of ${trialLimit} tries. Limits are reset every 24 hours.`,
+      { 
+        remainingTrials: 0,
+        trialLimit,
+        timeUntilReset: trialLimitService.getTimeUntilReset(userId, contentType)
+      }
+    );
   }
 
   try {
-    const result = await contentService.analyzeContent(req, content);
-    // update user content tries
-    CacheService.saveToCache(contentTriesKey, contentTries + 1, {
-      expiresIn: 24 * 60 * 60 * 1000,
+    const isVideo = contentType === 'video';
+    // Call service with caching enabled by default
+    const result = await contentService.analyzeContent(req, content, isVideo, {
+      cacheFirst: true,
+      userId,
+      contentType,
+      cacheConfig: {
+        ttl: 3600, // Cache for 1 hour
+        enabled: true
+      }
     });
-    return SuccessResponse(res, 'Content analysis successful', result);
+
+    // Increment trial count after successful analysis
+    trialLimitService.incrementCount(userId, contentType);
+
+    // Return success response with additional metadata
+    return SuccessResponse(res, 'Content analysis successful', {
+      ...result,
+      metadata: {
+        remainingTrials: trialLimitService.getRemainingTrials(userId, contentType),
+        trialLimit: trialLimitService.getTrialLimit(),
+        contentType,
+        userId: userId === 'anonymous' ? undefined : userId
+      }
+    });
   } catch (error) {
     console.error('Error analyzing content:', error);
-    return ErrorResponse(res, 'Failed to analyze content');
+    return ErrorResponse(res, 'Failed to analyze content', {
+      remainingTrials: trialLimitService.getRemainingTrials(userId, contentType),
+      trialLimit: trialLimitService.getTrialLimit()
+    });
   }
 }
