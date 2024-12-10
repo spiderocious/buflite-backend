@@ -1,4 +1,5 @@
 import { config as dotEnvConfig } from 'dotenv';
+import { PromptType } from '../constants/prompts';
 
 // Load environment variables
 dotEnvConfig();
@@ -91,6 +92,22 @@ export interface LoggingConfig {
   file: string;
 }
 
+export interface AIConfig {
+  anthropic: {
+    apiKey: string;
+    model: string;
+  };
+}
+
+type Prompt = {
+  systemPrompt: string;
+  userPrompt: string;
+};
+
+export type PromptConfig = {
+  [K in PromptType]: Prompt;
+};
+
 export const config = {
   app: {
     port: parseInt(process.env.PORT || '3000'),
@@ -179,26 +196,41 @@ export const config = {
     level: process.env.LOG_LEVEL || 'info',
     file: process.env.LOG_FILE || 'logs/app.log',
   } as LoggingConfig,
+
+  ai: {
+    anthropic: {
+      apiKey: process.env.ANTHROPIC_API_KEY || '',
+      model: process.env.ANTHROPIC_MODEL || 'claude-2',
+    },
+  } as AIConfig,
+
+  prompts: {
+    [PromptType.CONTENT]: {
+      systemPrompt: process.env.CONTENT_SYSTEM_PROMPT || 'Analyze the content provided.',
+      userPrompt: process.env.CONTENT_USER_PROMPT || 'Please analyze this content.',
+    },
+    [PromptType.VIDEO]: {
+      systemPrompt: process.env.CONTENT_SYSTEM_PROMPT || 'Analyze the video content provided.',
+      userPrompt: process.env.VIDEO_USER_PROMPT || 'Please analyze this video content.',
+    },
+    [PromptType.DASHBOARD]: {
+      systemPrompt: process.env.DASHBOARD_SYSTEM_PROMPT || 'Analyze the dashboard data provided.',
+      userPrompt: process.env.DASHBOARD_USER_PROMPT || 'Please analyze this dashboard data.',
+    },
+  }
 };
 
 /**
  * Validate configuration
  */
 export const validateConfig = (): void => {
-  const requiredForProduction = [
-    'JWT_SECRET',
-  ];
+  const requiredForProduction = ['JWT_SECRET'];
 
   // Database specific required variables
   if (config.database.type === 'mongodb') {
     requiredForProduction.push('MONGODB_URI');
   } else if (config.database.type === 'mysql') {
-    requiredForProduction.push(
-      'MYSQL_HOST',
-      'MYSQL_DATABASE',
-      'MYSQL_USERNAME',
-      'MYSQL_PASSWORD'
-    );
+    requiredForProduction.push('MYSQL_HOST', 'MYSQL_DATABASE', 'MYSQL_USERNAME', 'MYSQL_PASSWORD');
   }
 
   // Only enforce required vars in production
@@ -206,7 +238,9 @@ export const validateConfig = (): void => {
     const missing = requiredForProduction.filter(key => !process.env[key]);
 
     if (missing.length > 0) {
-      throw new Error(`Missing required environment variables for production: ${missing.join(', ')}`);
+      throw new Error(
+        `Missing required environment variables for production: ${missing.join(', ')}`
+      );
     }
   }
 
@@ -221,9 +255,7 @@ export const validateConfig = (): void => {
   }
 
   // Warn about optional but recommended variables
-  const recommended = [
-    'RESEND_API_KEY',
-  ];
+  const recommended = ['RESEND_API_KEY'];
 
   if (config.analytics.enabled) {
     recommended.push('MIXPANEL_TOKEN');

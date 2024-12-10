@@ -1,15 +1,17 @@
-import Anthropic from '@anthropic-ai/sdk';
-import { auditLog } from '../../../auditLog.service';
-import { Request } from 'express';
+import { dashboardMock, videoAnalysisMock } from '@/constants/mocks';
+import { PromptType } from '@/constants/prompts';
 import { cacheService } from '@/services/core/cache/cache.service';
 import { generateAlphanumericId, generateCacheKey } from '@/utils/idGenerator';
-import { analysisMock, videoAnalysisMock } from '../../../../constants/mocks';
-import { 
-  AnalysisOptions, 
-  AnalysisResult, 
-  RequestStatus, 
+import Anthropic from '@anthropic-ai/sdk';
+import { Request } from 'express';
+import config from '../../../../config';
+import { auditLog } from '../../../auditLog.service';
+import {
+  AnalysisContext,
+  AnalysisOptions,
+  AnalysisResult,
   AnthropicConfig,
-  AnalysisContext 
+  RequestStatus
 } from './types';
 
 export { RequestStatus } from './types';
@@ -18,12 +20,13 @@ export class AnthropicService {
   private anthropic: any;
   private config: AnthropicConfig;
   private cacheService: typeof cacheService;
+  private static instance: AnthropicService;
 
   constructor() {
     this.config = {
-      apiKey: process.env.ANTHROPIC_API_KEY || '',
-      model: process.env.ANTHROPIC_MODEL || 'claude-2',
-      maxTokens: 20000,
+      apiKey: config.ai.anthropic.apiKey || '',
+      model: config.ai.anthropic.model || 'claude-2',
+      maxTokens: 5000,
       temperature: 1,
       defaultCacheTTL: 3600, // 1 hour in seconds
     };
@@ -36,10 +39,20 @@ export class AnthropicService {
     this.cacheService = cacheService;
   }
 
-  async generateResponse(prompt: string, system: string): Promise<string> {
+  public static getInstance(): AnthropicService {
+    if (!AnthropicService.instance) {
+      AnthropicService.instance = new AnthropicService();
+    }
+    return AnthropicService.instance;
+  }
+
+  async generateResponse(prompt: string, system: string, options: {
+      useTooling?: boolean;
+  } = {}): Promise<string> {
     return new Promise((resolve) => {
       resolve(JSON.stringify(videoAnalysisMock)); // Mock response for testing
     });
+    const useTooling = options?.useTooling || false;
     try {
       const response = await this.anthropic.messages.create({
         model: this.config.model,
@@ -64,6 +77,12 @@ export class AnthropicService {
       throw new Error('Failed to generate response from AI service');
     }
   }
+  
+  async getDashboardTrends(): Promise<any> {
+    // This method can be implemented to fetch trends for the dashboard
+    // wait for 3000s
+    await new Promise(resolve => setTimeout(() => resolve(dashboardMock), 3000));
+  }
 
   /**
    * Analyze content with optional caching
@@ -71,13 +90,12 @@ export class AnthropicService {
   async analyzeContent(
     req: Request, 
     content: string, 
-    isVideo: boolean, 
+    contentType: PromptType, 
     options: AnalysisOptions = {}
   ): Promise<AnalysisResult> {
     const {
       cacheFirst = true,
       userId = 'anonymous',
-      contentType = isVideo ? 'video' : 'post',
       cacheConfig = {}
     } = options;
 
@@ -110,11 +128,9 @@ export class AnthropicService {
     await this.logUsage(context, RequestStatus.ANTHROPIC_REQUEST, content, null);
 
     try {
-      const platform = process.env.PLATFORM || 'unknown';
-      const prompt = await this.formatAnalysisPrompt(content, platform, isVideo);
-      const system = process.env.ANTHROPIC_ROLE || 'user';
+      const prompt = await this.getPrompt(content, contentType);
 
-      const response = await this.generateResponse(prompt, system);
+      const response = await this.generateResponse(prompt.content, prompt.system);
       const parsedResponse = JSON.parse(response);
       
       const result: AnalysisResult = { 
@@ -173,10 +189,27 @@ export class AnthropicService {
     }
   }
 
-  async formatAnalysisPrompt(content: string, platform: string, isVideo = false): Promise<string> {
-    const analysis = isVideo ? process.env.ANTHROPIC_VIDEO_PROMPT : process.env.ANTHROPIC_PROMPT;
-    const prompt = `${analysis || ''} Analysis Date: ${new Date().toISOString()}\n\n`;
-    return prompt.replace('{{CONTENT}}', content).replace('{{PLATFORM}}', platform);
+  async getPrompt(content: string, contentType: PromptType): Promise<{ content: string; system: string }> {
+    const promptConfig = config.prompts[contentType] || {};
+    if (!promptConfig.userPrompt || !promptConfig.systemPrompt) {
+      throw new Error(`Missing prompt configuration for content type: ${contentType}`);
+    }
+    // Format the prompt based on content type
+    const formattedPrompt = await this.replacePromptVariables(promptConfig.userPrompt, content);
+    return {
+      content: formattedPrompt,
+      system: promptConfig.systemPrompt
+    };
+  }
+
+  async replacePromptVariables(prompt: string, content: string) {
+    return prompt.replace('{{CONTENT}}', content);
+  }
+
+
+  async joinTodaysDateWithPrompt(prompt: string): Promise<string> {
+    const today = new Date().toISOString();
+    return `${prompt} Analysis Date: ${today}\n\n`;
   }
 
   async logUsage(context: AnalysisContext, event: string, content: string, response: any): Promise<void> {
@@ -190,4 +223,26 @@ export class AnthropicService {
       duration: Date.now() - context.startTime,
     });
   }
+
+  getTooling() {
+    return {
+      tools: [
+        {
+          "name": "web_search",
+          "type": "web_search_20250305",
+          "user_location": {
+            "type": "approximate",
+            "city": "Lagos",
+            "country": "US",
+            "region": "Americas"
+          }
+        }
+      ],
+      betas: ["web-search-2025-03-05"]
+    };
+  }
 }
+
+
+export const contentService = AnthropicService.getInstance();
+export default contentService;

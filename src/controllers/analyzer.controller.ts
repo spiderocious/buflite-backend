@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { AnthropicService } from '../services/core/ai/anthropic/anthropic.service';
+import contentService from '../services/core/ai/anthropic/anthropic.service';
 import { trialLimitService } from '../services/trialLimit.service';
 import { ErrorResponse, SuccessResponse } from '../utils/response';
 
-const contentService = new AnthropicService();
 
 export async function analyzeContent(req: Request, res: Response) {
   const { content, type } = req.body;
