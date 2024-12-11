@@ -1,4 +1,4 @@
-export const analysisMock = {
+export const contentAnalysisMock = {
   sentiment: {
     score: -0.75,
     label: 'negative',

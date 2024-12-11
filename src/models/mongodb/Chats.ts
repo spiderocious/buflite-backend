@@ -13,6 +13,7 @@ export interface Chat extends Document {
   sender: string;
   response: string;
   modelName: string;
+  type: string;
   createdAt: Date;
   updatedAt: Date;
   status: ChatStatus;
@@ -30,7 +31,6 @@ const chatSchema = new Schema<Chat>(
       type: String,
       required: true,
       trim: true,
-      maxlength: [5000, 'Message cannot be longer than 5000 characters'],
     },
     sender: {
       type: String,
@@ -46,6 +46,11 @@ const chatSchema = new Schema<Chat>(
       type: String,
       enum: Object.values(ChatStatus),
       default: ChatStatus.PENDING,
+      required: true,
+    },
+    type: {
+      type: String,
+      default: 'content',
       required: true,
     },
     modelName: {

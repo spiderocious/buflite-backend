@@ -4,6 +4,7 @@ import { Request } from 'express';
  * Options for content analysis
  */
 export interface AnalysisOptions {
+  useTooling?: boolean; // Whether to use tooling for analysis
   /** Whether to check cache first before making API call */
   cacheFirst?: boolean;
   /** User ID for context and logging */

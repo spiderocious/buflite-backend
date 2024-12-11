@@ -1,18 +1,19 @@
-import { dashboardMock, videoAnalysisMock } from '@/constants/mocks';
+import { contentAnalysisMock, dashboardMock, videoAnalysisMock } from '@/constants/mocks';
 import { PromptType } from '@/constants/prompts';
 import { cacheService } from '@/services/core/cache/cache.service';
-import { generateAlphanumericId, generateCacheKey } from '@/utils/idGenerator';
+import { generateAlphanumericId, generateCacheKey, generateUUID } from '@/utils/idGenerator';
 import Anthropic from '@anthropic-ai/sdk';
 import { Request } from 'express';
-import config from '../../../../config';
-import { auditLog } from '../../../auditLog.service';
+import config from '@/config';
+import { auditLog } from '@/services/auditLog.service';
 import {
   AnalysisContext,
   AnalysisOptions,
   AnalysisResult,
   AnthropicConfig,
-  RequestStatus
+  RequestStatus,
 } from './types';
+import { ChatModel, ChatStatus } from '@/models/mongodb/Chats';
 
 export { RequestStatus } from './types';
 
@@ -30,7 +31,6 @@ export class AnthropicService {
       temperature: 1,
       defaultCacheTTL: 3600, // 1 hour in seconds
     };
-    console.log('authenticating with Anthropic service using')
 
     this.anthropic = new Anthropic({
       apiKey: this.config.apiKey,
@@ -46,13 +46,19 @@ export class AnthropicService {
     return AnthropicService.instance;
   }
 
-  async generateResponse(prompt: string, system: string, options: {
+  async generateResponse(
+    prompt: string,
+    system: string,
+    options: {
       useTooling?: boolean;
-  } = {}): Promise<string> {
-    return new Promise((resolve) => {
-      resolve(JSON.stringify(videoAnalysisMock)); // Mock response for testing
-    });
+      contentType?: PromptType;
+    } = {}
+  ): Promise<string> {
     const useTooling = options?.useTooling || false;
+    const tools = useTooling ? this.getTooling() : {};
+    if (config.ai.anthropic.mock) {
+      return this.getMockResponse(options.contentType || PromptType.CONTENT);
+    }
     try {
       const response = await this.anthropic.messages.create({
         model: this.config.model,
@@ -70,6 +76,7 @@ export class AnthropicService {
             ],
           },
         ],
+        ...{ ...tools },
       });
 
       return response?.content?.[0]?.text || '';
@@ -77,7 +84,16 @@ export class AnthropicService {
       throw new Error('Failed to generate response from AI service');
     }
   }
-  
+
+  async getMockResponse(type: PromptType): Promise<string> {
+    const mockToPromptMap: Record<PromptType, string> = {
+      [PromptType.CONTENT]: JSON.stringify(contentAnalysisMock),
+      [PromptType.VIDEO]: JSON.stringify(videoAnalysisMock),
+      [PromptType.DASHBOARD]: JSON.stringify(dashboardMock),
+    };
+    return mockToPromptMap[type] || '';
+  }
+
   async getDashboardTrends(): Promise<any> {
     // This method can be implemented to fetch trends for the dashboard
     // wait for 3000s
@@ -88,31 +104,32 @@ export class AnthropicService {
    * Analyze content with optional caching
    */
   async analyzeContent(
-    req: Request, 
-    content: string, 
-    contentType: PromptType, 
+    req: Request,
+    content: string,
+    contentType: PromptType,
     options: AnalysisOptions = {}
   ): Promise<AnalysisResult> {
     const {
       cacheFirst = true,
       userId = 'anonymous',
-      cacheConfig = {}
+      cacheConfig = {},
+      useTooling = false,
     } = options;
 
-    const analysisId = generateAlphanumericId(10);
+    const analysisId = generateUUID();
     const context: AnalysisContext = {
       request: req,
       userId,
       contentType,
       analysisId,
-      startTime: Date.now()
+      startTime: Date.now(),
     };
 
     // Generate cache key for this content
     const cacheKey = generateCacheKey(content, contentType);
 
     // Check cache first if enabled
-    if (cacheFirst && (cacheConfig.enabled !== false)) {
+    if (cacheFirst && cacheConfig.enabled !== false) {
       const cachedResult = this.getCachedResult(cacheKey);
       if (cachedResult) {
         await this.logUsage(context, RequestStatus.ANTHROPIC_RESULT, content, {
@@ -130,12 +147,27 @@ export class AnthropicService {
     try {
       const prompt = await this.getPrompt(content, contentType);
 
-      const response = await this.generateResponse(prompt.content, prompt.system);
+      const response = await this.generateResponse(prompt.content, prompt.system, {
+        useTooling,
+        contentType,
+      });
       const parsedResponse = JSON.parse(response);
-      
-      const result: AnalysisResult = { 
-        ...parsedResponse, 
-        analysisId 
+
+      const chatData = {
+        id: analysisId,
+        message: content,
+        response: parsedResponse,
+        sender: userId,
+        type: contentType,
+        status: ChatStatus.COMPLETED,
+        modelName: this.config.model,
+      };
+
+      await ChatModel.create(chatData);
+
+      const result: AnalysisResult = {
+        ...parsedResponse,
+        analysisId,
       };
 
       // Cache the response if caching is enabled
@@ -189,7 +221,10 @@ export class AnthropicService {
     }
   }
 
-  async getPrompt(content: string, contentType: PromptType): Promise<{ content: string; system: string }> {
+  async getPrompt(
+    content: string,
+    contentType: PromptType
+  ): Promise<{ content: string; system: string }> {
     const promptConfig = config.prompts[contentType] || {};
     if (!promptConfig.userPrompt || !promptConfig.systemPrompt) {
       throw new Error(`Missing prompt configuration for content type: ${contentType}`);
@@ -198,7 +233,7 @@ export class AnthropicService {
     const formattedPrompt = await this.replacePromptVariables(promptConfig.userPrompt, content);
     return {
       content: formattedPrompt,
-      system: promptConfig.systemPrompt
+      system: promptConfig.systemPrompt,
     };
   }
 
@@ -206,13 +241,17 @@ export class AnthropicService {
     return prompt.replace('{{CONTENT}}', content);
   }
 
-
   async joinTodaysDateWithPrompt(prompt: string): Promise<string> {
     const today = new Date().toISOString();
     return `${prompt} Analysis Date: ${today}\n\n`;
   }
 
-  async logUsage(context: AnalysisContext, event: string, content: string, response: any): Promise<void> {
+  async logUsage(
+    context: AnalysisContext,
+    event: string,
+    content: string,
+    response: any
+  ): Promise<void> {
     await auditLog.logFromRequest(context.request, event, event, {
       event,
       content,
@@ -228,21 +267,20 @@ export class AnthropicService {
     return {
       tools: [
         {
-          "name": "web_search",
-          "type": "web_search_20250305",
-          "user_location": {
-            "type": "approximate",
-            "city": "Lagos",
-            "country": "US",
-            "region": "Americas"
-          }
-        }
+          name: 'web_search',
+          type: 'web_search_20250305',
+          user_location: {
+            type: 'approximate',
+            city: 'Lagos',
+            country: 'US',
+            region: 'Americas',
+          },
+        },
       ],
-      betas: ["web-search-2025-03-05"]
+      betas: ['web-search-2025-03-05'],
     };
   }
 }
-
 
 export const contentService = AnthropicService.getInstance();
 export default contentService;

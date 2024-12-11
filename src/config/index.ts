@@ -96,6 +96,7 @@ export interface AIConfig {
   anthropic: {
     apiKey: string;
     model: string;
+    mock: boolean;
   };
 }
 
@@ -201,6 +202,7 @@ export const config = {
     anthropic: {
       apiKey: process.env.ANTHROPIC_API_KEY || '',
       model: process.env.ANTHROPIC_MODEL || 'claude-2',
+      mock: process.env.ANTHROPIC_USE_MOCK_DATA === 'true',
     },
   } as AIConfig,
 

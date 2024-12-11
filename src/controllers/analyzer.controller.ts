@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import contentService from '../services/core/ai/anthropic/anthropic.service';
 import { trialLimitService } from '../services/trialLimit.service';
 import { ErrorResponse, SuccessResponse } from '../utils/response';
+import { PromptType } from '../constants';
 
 
 export async function analyzeContent(req: Request, res: Response) {
   const { content, type } = req.body;
-  const contentType = type || 'post'; // can be video
+  const contentType = type || 'content'; // can be video
   const userId = (req as any).userId || 'anonymous';
 
   // Input validation
@@ -33,7 +34,7 @@ export async function analyzeContent(req: Request, res: Response) {
   }
 
   try {
-    const isVideo = contentType === 'video';
+    const isVideo = contentType === 'video' ? PromptType.VIDEO : PromptType.CONTENT;
     // Call service with caching enabled by default
     const result = await contentService.analyzeContent(req, content, isVideo, {
       cacheFirst: true,
