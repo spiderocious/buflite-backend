@@ -1,11 +1,12 @@
+import config from '@/config';
 import { contentAnalysisMock, dashboardMock, videoAnalysisMock } from '@/constants/mocks';
 import { PromptType } from '@/constants/prompts';
+import { ChatModel, ChatStatus } from '@/models/mongodb/Chats';
+import { auditLog } from '@/services/auditLog.service';
 import { cacheService } from '@/services/core/cache/cache.service';
-import { generateAlphanumericId, generateCacheKey, generateUUID } from '@/utils/idGenerator';
+import { generateCacheKey, generateUUID } from '@/utils/idGenerator';
 import Anthropic from '@anthropic-ai/sdk';
 import { Request } from 'express';
-import config from '@/config';
-import { auditLog } from '@/services/auditLog.service';
 import {
   AnalysisContext,
   AnalysisOptions,
@@ -13,7 +14,6 @@ import {
   AnthropicConfig,
   RequestStatus,
 } from './types';
-import { ChatModel, ChatStatus } from '@/models/mongodb/Chats';
 
 export { RequestStatus } from './types';
 
@@ -226,7 +226,7 @@ export class AnthropicService {
     // Format the prompt based on content type
     const formattedPrompt = await this.replacePromptVariables(promptConfig.userPrompt, content);
     return {
-      content: formattedPrompt,
+      content: this.joinTodaysDateWithPrompt(formattedPrompt),
       system: promptConfig.systemPrompt,
     };
   }
@@ -235,7 +235,7 @@ export class AnthropicService {
     return prompt.replace('{{CONTENT}}', content);
   }
 
-  async joinTodaysDateWithPrompt(prompt: string): Promise<string> {
+  joinTodaysDateWithPrompt(prompt: string): string {
     const today = new Date().toISOString();
     return `${prompt} Analysis Date: ${today}\n\n`;
   }
