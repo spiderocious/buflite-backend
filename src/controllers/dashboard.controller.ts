@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
-import contentService from '../services/core/ai/anthropic/anthropic.service';
-import { trialLimitService } from '../services/trialLimit.service';
-import { ErrorResponse, SuccessResponse } from '../utils/response';
-import { PromptType } from '../constants';
 import dashboardService from '../services/dashboard.service';
+import { ErrorResponse, SuccessResponse } from '../utils/response';
 
 export async function getDashboardData(req: Request, res: Response) {
   try {

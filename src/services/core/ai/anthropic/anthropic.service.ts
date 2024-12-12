@@ -91,13 +91,7 @@ export class AnthropicService {
       [PromptType.VIDEO]: JSON.stringify(videoAnalysisMock),
       [PromptType.DASHBOARD]: JSON.stringify(dashboardMock),
     };
-    return mockToPromptMap[type] || '';
-  }
-
-  async getDashboardTrends(): Promise<any> {
-    // This method can be implemented to fetch trends for the dashboard
-    // wait for 3000s
-    await new Promise(resolve => setTimeout(() => resolve(dashboardMock), 3000));
+    return await new Promise(resolve => setTimeout(() => resolve(mockToPromptMap[type]), 3000));
   }
 
   /**
@@ -156,7 +150,7 @@ export class AnthropicService {
       const chatData = {
         id: analysisId,
         message: content,
-        response: parsedResponse,
+        response: response,
         sender: userId,
         type: contentType,
         status: ChatStatus.COMPLETED,

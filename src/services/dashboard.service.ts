@@ -1,10 +1,10 @@
 import config from '@/config';
 import { PromptType } from '@/constants';
-import TrendsModel from '../models/mongodb/Trends';
 import { generateUUID } from '@/utils/idGenerator';
+import { Request } from 'express';
+import TrendsModel from '../models/mongodb/Trends';
 import contentService from './core/ai/anthropic/anthropic.service';
 import { CacheService } from './core/cache';
-import { Request } from 'express';
 
 const DASHBOARD_CACHE_KEY = 'dashboard_data';
 export class DashboardService {
@@ -50,23 +50,33 @@ export class DashboardService {
 
   public async fetchTrendsData(req: Request): Promise<any> {
     // validate if dashboard has been fetched in the last 1 hour
-    const cachedData = this.cacheService.getFromCache<any>(DASHBOARD_CACHE_KEY);
+      const cachedData = this.cacheService.getFromCache<any>(DASHBOARD_CACHE_KEY);
+      
     if (cachedData) {
       const lastFetched = new Date(cachedData.requestDate);
       const now = new Date();
       const diffInHours = (now.getTime() - lastFetched.getTime()) / (1000 * 60 * 60);
       if (diffInHours < 1) {
-        return cachedData; // Return cached data if fetched within the last hour
+        return {
+          ...cachedData,
+          cached: true,
+          requestDate: lastFetched.toISOString(),
+        }; // Return cached data if fetched within the last hour
       }
     }
 
-    const data = await contentService.analyzeContent(req, '', PromptType.DASHBOARD, {
+    const data = await contentService.analyzeContent(req, 'dashboard', PromptType.DASHBOARD, {
       useTooling: true,
       cacheFirst: false,
     });
     if (data) {
+      const parsedData = {
+        ...data,
+        cached: false,
+        requestDate: new Date().toISOString(),
+      };
       // Save to cache
-      this.cacheService.saveToCache(DASHBOARD_CACHE_KEY, data, { expiresIn: 36000 }); // Cache for 10 hours
+      this.cacheService.saveToCache(DASHBOARD_CACHE_KEY, parsedData, { expiresIn: 36000 }); // Cache for 10 hours
       const trendData = {
         id: generateUUID(),
         data,
@@ -74,7 +84,7 @@ export class DashboardService {
       };
       await TrendsModel.create(trendData);
       // Return the data
-      return data;
+      return parsedData;
     }
     throw new Error('Failed to fetch trends data');
   }
