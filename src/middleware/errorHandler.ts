@@ -13,6 +13,7 @@ import {
   DatabaseError,
   ExternalServiceError,
   handleMongooseError,
+  RequestError,
 } from '@/utils/errors';
 import {
   ValidationErrorResponse,
@@ -118,6 +119,10 @@ const sendErrorResponse = (res: Response, error: AppError): void => {
 
     case NotFoundError:
       NotFoundResponse(res, error.message);
+      break;
+    
+    case RequestError:
+      ValidationErrorResponse(res, error.message);
       break;
 
     case ConflictError:

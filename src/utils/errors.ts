@@ -13,7 +13,7 @@ export class AppError extends Error {
 
   constructor(
     message: string, 
-    statusCode: number = 500, 
+    statusCode: number = 400, 
     isOperational: boolean = true
   ) {
     super(message);

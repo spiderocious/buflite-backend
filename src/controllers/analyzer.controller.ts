@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
+import { PromptType } from '../constants';
+import { ChatModel } from '../models/mongodb/Chats';
 import contentService from '../services/core/ai/anthropic/anthropic.service';
 import { trialLimitService } from '../services/trialLimit.service';
 import { ErrorResponse, SuccessResponse } from '../utils/response';
-import { PromptType } from '../constants';
 
 
 export async function analyzeContent(req: Request, res: Response) {
@@ -60,10 +61,19 @@ export async function analyzeContent(req: Request, res: Response) {
       }
     });
   } catch (error) {
-    console.error('Error analyzing content:', error);
     return ErrorResponse(res, 'Failed to analyze content', {
       remainingTrials: trialLimitService.getRemainingTrials(userId, contentType),
       trialLimit: trialLimitService.getTrialLimit()
     });
   }
+}
+
+export async function getAnalyzedContent(req: Request, res: Response) {
+  const { type } = req.params;
+  const userId = (req as any).userId || 'anonymous';
+  console.log({ sender: userId, type });
+  const chats = await ChatModel.find({ sender: userId, type }).sort({ createdAt: -1 });
+  return SuccessResponse(res, 'Retrieved analyzed content', {
+    chats
+  })
 }

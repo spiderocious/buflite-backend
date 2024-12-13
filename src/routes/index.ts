@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { analyzeContent } from '../controllers/analyzer.controller';
+import { analyzeContent, getAnalyzedContent } from '../controllers/analyzer.controller';
 import { fetchDashboardTrends, getDashboardData } from '../controllers/dashboard.controller';
 import { authenticateToken, rateLimitByUser } from '../middleware/auth';
 import { NotFoundResponse, SuccessResponse } from '../utils/response';
@@ -35,6 +35,7 @@ v1Router.use('/auth', authRoutes);
 v1Router.post('/app/analyze', authenticateToken, rateLimitByUser(2, 3600000), analyzeContent);
 v1Router.get('/app/dashboard', authenticateToken, getDashboardData);
 v1Router.post('/app/dashboard/trends', authenticateToken, fetchDashboardTrends);
+v1Router.get('/app/:type/chats', authenticateToken, getAnalyzedContent);
 
 
 // Mount v1 routes

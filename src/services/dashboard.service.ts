@@ -35,15 +35,19 @@ export class DashboardService {
     // if not from cache, fetch the last data from database
     const data = await TrendsModel.findOne({}, {}, { sort: { createdAt: -1 } });
     if (data) {
+      const parsedData = data?.data || {};
+      if (!parsedData) {
+        return null; // No data found
+      }
       this.cacheService.saveToCache(
         DASHBOARD_CACHE_KEY,
         {
-          ...data,
+          ...parsedData,
           requestDate: new Date().toISOString(),
         },
         { expiresIn: 3600 }
       ); // Cache for 1 hour
-      return data;
+      return parsedData;
     }
     return null; // No data found
   }
@@ -77,9 +81,10 @@ export class DashboardService {
       };
       // Save to cache
       this.cacheService.saveToCache(DASHBOARD_CACHE_KEY, parsedData, { expiresIn: 36000 }); // Cache for 10 hours
+
       const trendData = {
         id: generateUUID(),
-        data,
+        data: parsedData,
         modelName: config.ai.anthropic.model,
       };
       await TrendsModel.create(trendData);
