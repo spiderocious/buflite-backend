@@ -73,7 +73,11 @@ export async function getAnalyzedContent(req: Request, res: Response) {
   const userId = (req as any).userId || 'anonymous';
   console.log({ sender: userId, type });
   const chats = await ChatModel.find({ sender: userId, type }).sort({ createdAt: -1 });
-  return SuccessResponse(res, 'Retrieved analyzed content', {
-    chats
-  })
+  const data = chats.map(chat => ({
+    id: chat._id,
+    content: chat.message,
+    createdAt: chat.createdAt,
+    updatedAt: chat.updatedAt,
+  }));
+  return SuccessResponse(res, 'Retrieved analyzed content', data)
 }
