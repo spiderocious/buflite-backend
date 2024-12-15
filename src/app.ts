@@ -10,7 +10,6 @@ import { SuccessResponse } from './utils/response';
 import { setupErrorHandlers } from './middleware/errorHandler';
 import DatabaseFactory, { getDatabaseHealth } from './config/database';
 import { CacheService } from './services/core/cache';
-import { getEmailServiceHealth } from './services/email.service';
 import routes from './routes';
 
 class App {
@@ -123,7 +122,6 @@ class App {
       const health = await getDatabaseHealth();
       const cacheHealth = CacheService.getHealth();
       const cacheStats = CacheService.getCacheStats();
-      const emailHealth = await getEmailServiceHealth();
       
       SuccessResponse(res, 'API is healthy', {
         timestamp: new Date().toISOString(),
@@ -135,8 +133,6 @@ class App {
             hitRate: cacheStats.hitRate + '%',
             keys: cacheStats.keys
           },
-          email: emailHealth,
-          analytics: config.analytics.enabled ? 'enabled' : 'disabled'
         }
       });
     });

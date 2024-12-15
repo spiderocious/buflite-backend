@@ -5,7 +5,7 @@ import { PromptType } from '../constants/prompts';
 dotEnvConfig();
 
 export interface DatabaseConfig {
-  type: 'mongodb' | 'mysql';
+  type: 'mongodb';
   mongodb: {
     uri: string;
     testUri: string;
@@ -15,20 +15,6 @@ export interface DatabaseConfig {
       socketTimeoutMS: number;
       bufferCommands: boolean;
       dbName?: string;
-    };
-  };
-  mysql: {
-    host: string;
-    port: number;
-    database: string;
-    username: string;
-    password: string;
-    testDatabase: string;
-    options: {
-      connectionLimit: number;
-      acquireTimeout: number;
-      timeout: number;
-      reconnect: boolean;
     };
   };
 }
@@ -50,36 +36,6 @@ export interface CacheConfig {
   checkPeriod: number;
 }
 
-export interface EmailConfig {
-  provider: 'resend' | 'sendgrid';
-  resend: {
-    apiKey: string;
-    fromEmail: string;
-    fromName: string;
-  };
-  sendgrid: {
-    apiKey: string;
-    fromEmail: string;
-    fromName: string;
-  };
-}
-
-export interface AnalyticsConfig {
-  enabled: boolean;
-  provider: 'mixpanel' | 'amplitude';
-  mixpanel: {
-    token: string;
-  };
-  amplitude: {
-    apiKey: string;
-  };
-}
-
-export interface JobsConfig {
-  pollInterval: number;
-  maxRetries: number;
-  cleanupInterval: number;
-}
 
 export interface SecurityConfig {
   bcryptRounds: number;
@@ -117,7 +73,7 @@ export const config = {
   } as AppConfig,
 
   database: {
-    type: (process.env.DB_TYPE as 'mongodb' | 'mysql') || 'mongodb',
+    type: 'mongodb',
     mongodb: {
       uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/buffer_lyte',
       testUri: process.env.MONGODB_TEST_URI || 'mongodb://localhost:27017/buffer_lyte_test',
@@ -127,20 +83,6 @@ export const config = {
         socketTimeoutMS: 45000,
         bufferCommands: false,
         dbName: process.env.MONGODB_DB_NAME || 'buffer_lyte',
-      },
-    },
-    mysql: {
-      host: process.env.MYSQL_HOST || 'localhost',
-      port: parseInt(process.env.MYSQL_PORT || '3306'),
-      database: process.env.MYSQL_DATABASE || 'buffer_lyte',
-      username: process.env.MYSQL_USERNAME || 'root',
-      password: process.env.MYSQL_PASSWORD || 'password',
-      testDatabase: process.env.MYSQL_TEST_DATABASE || 'buffer_lyte_test',
-      options: {
-        connectionLimit: 10,
-        acquireTimeout: 60000,
-        timeout: 60000,
-        reconnect: true,
       },
     },
   } as DatabaseConfig,
@@ -156,36 +98,6 @@ export const config = {
     checkPeriod: parseInt(process.env.CACHE_CHECK_PERIOD || '120'),
   } as CacheConfig,
 
-  email: {
-    provider: (process.env.EMAIL_PROVIDER as 'resend' | 'sendgrid') || 'resend',
-    resend: {
-      apiKey: process.env.RESEND_API_KEY || '',
-      fromEmail: process.env.FROM_EMAIL || 'noreply@example.com',
-      fromName: process.env.FROM_NAME || 'Backend Template',
-    },
-    sendgrid: {
-      apiKey: process.env.SENDGRID_API_KEY || '',
-      fromEmail: process.env.FROM_EMAIL || 'noreply@example.com',
-      fromName: process.env.FROM_NAME || 'Backend Template',
-    },
-  } as EmailConfig,
-
-  analytics: {
-    enabled: process.env.ANALYTICS_ENABLED === 'true',
-    provider: (process.env.ANALYTICS_PROVIDER as 'mixpanel' | 'amplitude') || 'mixpanel',
-    mixpanel: {
-      token: process.env.MIXPANEL_TOKEN || '',
-    },
-    amplitude: {
-      apiKey: process.env.AMPLITUDE_API_KEY || '',
-    },
-  } as AnalyticsConfig,
-
-  jobs: {
-    pollInterval: parseInt(process.env.JOB_POLL_INTERVAL || '5000'),
-    maxRetries: parseInt(process.env.JOB_MAX_RETRIES || '3'),
-    cleanupInterval: parseInt(process.env.JOB_CLEANUP_INTERVAL || '86400000'),
-  } as JobsConfig,
 
   security: {
     bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS || '12'),
@@ -229,11 +141,7 @@ export const validateConfig = (): void => {
   const requiredForProduction = ['JWT_SECRET'];
 
   // Database specific required variables
-  if (config.database.type === 'mongodb') {
-    requiredForProduction.push('MONGODB_URI');
-  } else if (config.database.type === 'mysql') {
-    requiredForProduction.push('MYSQL_HOST', 'MYSQL_DATABASE', 'MYSQL_USERNAME', 'MYSQL_PASSWORD');
-  }
+  requiredForProduction.push('MONGODB_URI');
 
   // Only enforce required vars in production
   if (config.app.env === 'production') {
@@ -252,21 +160,8 @@ export const validateConfig = (): void => {
   }
 
   // Validate database type
-  if (!['mongodb', 'mysql'].includes(config.database.type)) {
-    throw new Error('DB_TYPE must be either "mongodb" or "mysql"');
-  }
-
-  // Warn about optional but recommended variables
-  const recommended = ['RESEND_API_KEY'];
-
-  if (config.analytics.enabled) {
-    recommended.push('MIXPANEL_TOKEN');
-  }
-
-  const missingRecommended = recommended.filter(key => !process.env[key]);
-
-  if (missingRecommended.length > 0 && config.app.env === 'production') {
-    console.warn(`Missing recommended environment variables: ${missingRecommended.join(', ')}`);
+  if (config.database.type !== 'mongodb') {
+    throw new Error('Only MongoDB is supported');
   }
 };
 

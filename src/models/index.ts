@@ -1,19 +1,11 @@
-import { config } from '@/config';
+// MongoDB models (BuffByte only uses MongoDB)
+export * from './mongodb';
 
-// Dynamic model imports based on database type
-export const getModels = () => {
-  if (config.database.type === 'mongodb') {
-    return require('./mongodb');
-  } else if (config.database.type === 'mysql') {
-    return require('./mysql');
-  } else {
-    throw new Error(`Unsupported database type: ${config.database.type}`);
-  }
-};
-
-// Re-export based on current database type
-export const { User, Job, AuditLog } = getModels();
+// Export specific models for convenience
+export { User } from './mongodb/User';
+export { ChatModel } from './mongodb/Chats';
+export { TrendsModel } from './mongodb/Trends';
+export { AuditLog } from './mongodb/AuditLog';
 
 // Export types
-export type { IUser, IJob, IAuditLog } from './mongodb';
-export type { JobStatus } from './mysql';
+export type { IUser, IAuditLog } from './mongodb';

@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models';
 import { auditLog } from '../services/auditLog.service';
-import { getEmailService } from '../services/core/email';
 import { RequestError } from '../utils/errors';
 import { JWTUtils } from '../utils/jwt';
 import { logger } from '../utils/logger';

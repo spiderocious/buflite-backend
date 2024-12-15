@@ -1,14 +1,12 @@
 import { config } from './index';
 import { mongoConnection } from './mongodb';
-import { mysqlConnection } from './mysql';
 import { logger } from '../utils/logger';
 
 export interface DatabaseHealth {
   status: 'connected' | 'disconnected' | 'error';
-  type: 'mongodb' | 'mysql';
+  type: 'mongodb';
   database: string;
   collections?: number;
-  tables?: number;
 }
 
 export interface DatabaseConnection {
@@ -35,11 +33,6 @@ class DatabaseFactory {
         case 'mongodb':
           this.currentConnection = mongoConnection;
           await mongoConnection.connect();
-          break;
-          
-        case 'mysql':
-          this.currentConnection = mysqlConnection;
-          await mysqlConnection.connect();
           break;
           
         default:
@@ -106,12 +99,6 @@ class DatabaseFactory {
     return mongoConnection;
   }
 
-  public static getMySQLConnection(): any {
-    if (config.database.type !== 'mysql') {
-      throw new Error('MySQL is not the active database type');
-    }
-    return mysqlConnection;
-  }
 
   /**
    * Clear database (for testing)
@@ -131,7 +118,7 @@ class DatabaseFactory {
   /**
    * Switch database type (primarily for testing)
    */
-  public static async switchDatabase(type: 'mongodb' | 'mysql'): Promise<void> {
+  public static async switchDatabase(type: 'mongodb'): Promise<void> {
     if (config.app.env === 'production') {
       throw new Error('Database switching is not allowed in production');
     }
@@ -194,7 +181,7 @@ class DatabaseFactory {
 
 // Export the factory and individual connections
 export default DatabaseFactory;
-export { mongoConnection, mysqlConnection };
+export { mongoConnection };
 
 // Export convenience functions with proper binding
 export const connectDatabase = () => DatabaseFactory.connect();

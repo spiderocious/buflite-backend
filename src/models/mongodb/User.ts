@@ -1,6 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { isValidEmail } from '../../services/core/email/validation';
 import config from '../../config';
 
 export interface IUser extends Document {
