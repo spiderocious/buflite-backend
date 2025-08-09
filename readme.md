@@ -1,4 +1,4 @@
-# 🚀 BuffByte - AI-Powered Content Analysis Platform
+# BuffByte - AI-Powered Content Analysis Platform
 
 A production-ready Node.js/TypeScript backend for AI-powered content analysis and dashboard insights. Built with Anthropic's Claude API, MongoDB, and intelligent caching.
 
@@ -8,35 +8,34 @@ A production-ready Node.js/TypeScript backend for AI-powered content analysis an
 [![MongoDB](https://img.shields.io/badge/MongoDB-8.0+-green.svg)](https://www.mongodb.com/)
 [![Anthropic](https://img.shields.io/badge/Anthropic-Claude-orange.svg)](https://anthropic.com/)
 
-## 🎯 What is BuffByte?
+## What is BuffByte?
 
 BuffByte is an AI-powered content analysis platform that helps users understand and analyze text and video content using advanced AI models. It provides intelligent insights, trend analysis, and dashboard analytics with a freemium business model.
 
-### ✨ Key Features
+### Key Features
 
-**🤖 AI Content Analysis**
+**AI Content Analysis**
 - Text and video content analysis using Anthropic's Claude
 - Smart caching to optimize API usage and costs
 - Trial-based system (5 free analyses per day)
 - Rate limiting for resource management
 
-**📊 Dashboard Intelligence**
+**Dashboard Intelligence**
 - AI-generated trend analysis with web search capabilities
 - Real-time insights and business intelligence
 - Intelligent caching (1-hour memory, 10-hour persistence)
 
-**🔐 User Management**
+**User Management**
 - JWT-based authentication with refresh tokens
 - Role-based access control (user/admin/moderator)
 - Trial limit tracking and management
 
-**⚡ Performance & Caching**
+**Performance & Caching**
 - Multi-level caching (memory + database)
 - Intelligent cache invalidation
 - MongoDB-based persistence
-- Background job processing
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 18+ and npm 8+
@@ -104,7 +103,7 @@ npm test
 
 Visit `http://localhost:3000/health` to verify the installation.
 
-## 📚 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /api/v1/auth/register` - User registration
@@ -122,7 +121,7 @@ Visit `http://localhost:3000/health` to verify the installation.
 - `GET /health` - Basic health check
 - `GET /api/health` - Detailed system health
 
-## 🏗 Architecture
+## Architecture
 
 ### Core Services
 - **AnthropicService** (`src/services/core/ai/anthropic/`) - AI integration with caching
@@ -146,7 +145,7 @@ if (cachedResult) {
 }
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -177,7 +176,7 @@ JWT_EXPIRE=24h
 BCRYPT_ROUNDS=12
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Docker (Recommended)
 ```bash
@@ -201,7 +200,7 @@ pm2 start dist/server.js --name BuffByte
 pm2 save && pm2 startup
 ```
 
-## 📊 Business Model
+## Business Model
 
 ### Trial System
 - **Free Tier**: 5 content analyses per day
@@ -213,7 +212,7 @@ pm2 save && pm2 startup
 - **Performance**: Sub-second response for cached content
 - **Scalability**: Database persistence for long-term storage
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -226,7 +225,7 @@ npm run test:coverage
 npm test -- analyzer.test.ts
 ```
 
-## 📈 Monitoring
+## Monitoring
 
 ### Health Checks
 ```bash
@@ -237,7 +236,7 @@ curl http://localhost:3000/api/health    # Detailed health
 ### Cache Statistics
 Check cache performance via health endpoints or logs.
 
-## 🤝 Development
+## Development
 
 ### Code Quality
 ```bash
@@ -257,10 +256,10 @@ src/
 └── utils/            # Helpers and utilities
 ```
 
-## 📄 License
+## License
 
 MIT License - feel free to use for personal and commercial projects.
 
 ---
 
-**BuffByte** - Making AI content analysis accessible and scalable 🚀
+**BuffByte** - Making AI content analysis accessible and scalable
