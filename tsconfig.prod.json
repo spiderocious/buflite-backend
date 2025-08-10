@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["dist/src/*"],
+      "@/config/*": ["dist/src/config/*"],
+      "@/controllers/*": ["dist/src/controllers/*"],
+      "@/middleware/*": ["dist/src/middleware/*"],
+      "@/models/*": ["dist/src/models/*"],
+      "@/routes/*": ["dist/src/routes/*"],
+      "@/services/*": ["dist/src/services/*"],
+      "@/utils/*": ["dist/src/utils/*"],
+      "@/types/*": ["dist/src/types/*"],
+      "@/jobs/*": ["dist/src/jobs/*"]
+    }
+  }
+}

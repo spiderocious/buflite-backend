@@ -25,7 +25,6 @@ const chatSchema = new Schema<Chat>(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     message: {
       type: String,

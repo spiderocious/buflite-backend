@@ -5,17 +5,13 @@
  * This file loads environment variables and starts the Express application
  */
 
-// Register path mappings for TypeScript
-import 'tsconfig-paths/register';
-
 import dotenv from 'dotenv';
 import path from 'path';
+import { logger } from './src/utils/logger';
 
 // Load environment variables based on NODE_ENV
-const nodeEnv = process.env.NODE_ENV || 'development';
 
-// Load appropriate .env file
-const envFile = nodeEnv === 'production' ? '.env' : `.env.${nodeEnv}`;
+const envFile = '.env';
 const envPath = path.resolve(process.cwd(), envFile);
 
 dotenv.config({ path: envPath });
@@ -25,18 +21,48 @@ if (!process.env.DB_TYPE) {
   dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 }
 
-import { logger } from './src/utils/logger';
+
 
 // Log startup information
-logger.info('🚀 Starting Backend Template Server...');
-logger.info(`📋 Environment: ${nodeEnv}`);
-logger.info(`📁 Loaded env from: ${envFile}`);
+console.info('🚀 Starting Backend Template Server...');
+logger.info(`📋 Environment: ${envPath}`);
+logger.info(`📁 Loaded envsss from: ${envFile}`);
 
+// ADD PROCESS MONITORING HERE
+process.on('exit', (code) => {
+  logger.error(`🚪 Process exiting with code: ${code}`);
+});
+
+process.on('uncaughtException', (error) => {
+  logger.error('💥 Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('🚨 Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+process.on('SIGTERM', () => {
+  logger.info('🛑 SIGTERM received, shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  logger.info('🛑 SIGINT received, shutting down gracefully');
+  process.exit(0);
+});
+
+console.log(`I AM HERE`);
 // Import and start the application
 import('./src/app')
   .then((appModule) => {
     const app = appModule.default;
+    logger.info('📦 App module loaded successfully');
     return app.start();
+  })
+  .then(() => {
+    logger.info('✅ Application started successfully');
   })
   .catch((error) => {
     logger.error('💥 Failed to start application:', error);

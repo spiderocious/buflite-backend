@@ -32,7 +32,7 @@ const v1Router = Router();
 // Authentication routes (public and protected)
 v1Router.use('/auth', authRoutes);
 
-v1Router.post('/app/analyze', authenticateToken, rateLimitByUser(2, 3600000), analyzeContent);
+v1Router.post('/app/analyze', authenticateToken, rateLimitByUser(50, 3600000), analyzeContent);
 v1Router.get('/app/dashboard', authenticateToken, getDashboardData);
 v1Router.post('/app/dashboard/trends', authenticateToken, fetchDashboardTrends);
 v1Router.get('/app/:type/chats', authenticateToken, getAnalyzedContent);

@@ -25,16 +25,16 @@
     "emitDecoratorMetadata": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
-      "@/config/*": ["src/config/*"],
-      "@/controllers/*": ["src/controllers/*"],
-      "@/middleware/*": ["src/middleware/*"],
-      "@/models/*": ["src/models/*"],
-      "@/routes/*": ["src/routes/*"],
-      "@/services/*": ["src/services/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/types/*": ["src/types/*"],
-      "@/jobs/*": ["src/jobs/*"]
+      "@/*": ["src/*", "dist/src/*"],
+      "@/config/*": ["src/config/*", "dist/src/config/*"],
+      "@/controllers/*": ["src/controllers/*", "dist/src/controllers/*"],
+      "@/middleware/*": ["src/middleware/*", "dist/src/middleware/*"],
+      "@/models/*": ["src/models/*", "dist/src/models/*"],
+      "@/routes/*": ["src/routes/*", "dist/src/routes/*"],
+      "@/services/*": ["src/services/*", "dist/src/services/*"],
+      "@/utils/*": ["src/utils/*", "dist/src/utils/*"],
+      "@/types/*": ["src/types/*", "dist/src/types/*"],
+      "@/jobs/*": ["src/jobs/*", "dist/src/jobs/*"]
     }
   },
   "include": [

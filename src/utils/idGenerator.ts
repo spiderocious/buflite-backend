@@ -1,11 +1,28 @@
 import { randomBytes, randomUUID, createHash } from 'crypto';
-import { customAlphabet } from 'nanoid';
 import { normalizeContent } from './helpers';
 
 /**
  * ID Generation Utilities
  * Provides various ID generation methods for different use cases
  */
+
+/**
+ * Custom alphabet function to generate IDs like nanoid
+ * Uses crypto.randomBytes for secure random generation
+ */
+const customAlphabet = (alphabet: string, length: number) => {
+  return (): string => {
+    let result = '';
+    const alphabetLength = alphabet.length;
+    const bytes = randomBytes(length);
+    
+    for (let i = 0; i < length; i++) {
+      result += alphabet[bytes[i] % alphabetLength];
+    }
+    
+    return result;
+  };
+};
 
 /**
  * Generate a UUID v4

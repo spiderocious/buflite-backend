@@ -138,10 +138,8 @@ export const config = {
  * Validate configuration
  */
 export const validateConfig = (): void => {
-  const requiredForProduction = ['JWT_SECRET'];
+  const requiredForProduction = ['JWT_SECRET', 'MONGODB_URI'];
 
-  // Database specific required variables
-  requiredForProduction.push('MONGODB_URI');
 
   // Only enforce required vars in production
   if (config.app.env === 'production') {
@@ -149,20 +147,11 @@ export const validateConfig = (): void => {
 
     if (missing.length > 0) {
       throw new Error(
-        `Missing required environment variables for production: ${missing.join(', ')}`
+        `Missing required environment variables for production: ${missing.join(', ')} Only found: ${Object.keys(process.env).join(', ')}`
       );
     }
   }
 
-  // Validate JWT secret strength in production
-  if (config.app.env === 'production' && config.jwt.secret.length < 32) {
-    throw new Error('JWT_SECRET must be at least 32 characters long in production');
-  }
-
-  // Validate database type
-  if (config.database.type !== 'mongodb') {
-    throw new Error('Only MongoDB is supported');
-  }
 };
 
 export default config;

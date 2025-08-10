@@ -1,7 +1,7 @@
-import winston from 'winston';
 import { config } from '@/config';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import winston from 'winston';
 
 // Ensure logs directory exists
 const logsDir = path.dirname(config.logging.file);
@@ -43,8 +43,6 @@ const logger = winston.createLogger({
   transports: [],
 });
 
-// Console transport for development
-if (config.app.env === 'development') {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(
       winston.format.colorize(),
@@ -53,33 +51,7 @@ if (config.app.env === 'development') {
       )
     ),
   }));
-}
 
-// File transports for production
-if (config.app.env === 'production') {
-  // Error log
-  logger.add(new winston.transports.File({
-    filename: path.join(logsDir, 'error.log'),
-    level: 'error',
-    maxsize: 5242880, // 5MB
-    maxFiles: 5,
-  }));
-
-  // Combined log
-  logger.add(new winston.transports.File({
-    filename: config.logging.file,
-    maxsize: 5242880, // 5MB
-    maxFiles: 5,
-  }));
-}
-
-// Test environment - minimal logging
-if (config.app.env === 'test') {
-  logger.add(new winston.transports.Console({
-    level: 'error',
-    silent: true,
-  }));
-}
 
 // Stream object for Morgan HTTP logger
 export const loggerStream = {

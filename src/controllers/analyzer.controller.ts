@@ -53,6 +53,8 @@ export async function analyzeContent(req: Request, res: Response) {
     // Return success response with additional metadata
     return SuccessResponse(res, 'Content analysis successful', {
       ...result,
+      content,
+      type: contentType,
       metadata: {
         remainingTrials: trialLimitService.getRemainingTrials(userId, contentType),
         trialLimit: trialLimitService.getTrialLimit(),
@@ -73,11 +75,5 @@ export async function getAnalyzedContent(req: Request, res: Response) {
   const userId = (req as any).userId || 'anonymous';
   console.log({ sender: userId, type });
   const chats = await ChatModel.find({ sender: userId, type }).sort({ createdAt: -1 });
-  const data = chats.map(chat => ({
-    id: chat._id,
-    content: chat.message,
-    createdAt: chat.createdAt,
-    updatedAt: chat.updatedAt,
-  }));
-  return SuccessResponse(res, 'Retrieved analyzed content', data)
+  return SuccessResponse(res, 'Retrieved analyzed content', chats)
 }

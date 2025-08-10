@@ -120,7 +120,7 @@ export class AnthropicService {
     };
 
     // Generate cache key for this content
-    const cacheKey = generateCacheKey(content, contentType);
+    const cacheKey = generateCacheKey(content, contentType) + contentType;
 
     // Check cache first if enabled
     if (cacheFirst && cacheConfig.enabled !== false) {
@@ -160,7 +160,7 @@ export class AnthropicService {
       await ChatModel.create(chatData);
 
       const result: AnalysisResult = {
-        ...parsedResponse,
+        ...chatData,
         analysisId,
       };
 
