@@ -120,11 +120,11 @@ class AuditLogService {
     data?: any,
     user?: string
   ): Promise<IAuditLog | null> {
-    const userIdentifier = user || req.user?.email || req.user?.id || 'ANONYMOUS';
+    const userIdentifier = user || req?.user?.email || req?.user?.id || 'ANONYMOUS';
     const options: AuditLogOptions = {
-      ipAddress: req.ip || req.connection.remoteAddress,
-      userAgent: req.get('User-Agent'),
-      requestId: req.headers['x-request-id'] as string
+      ipAddress: req?.ip || req?.connection?.remoteAddress,
+      userAgent: req?.get('User-Agent'),
+      requestId: req?.headers['x-request-id'] as string
     };
 
     return this.log(action, userIdentifier, description, data, options);

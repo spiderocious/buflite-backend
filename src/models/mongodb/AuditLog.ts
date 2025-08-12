@@ -76,13 +76,5 @@ const auditLogSchema = new Schema<IAuditLog>({
   collection: 'audit_logs'
 });
 
-// Compound indexes for efficient querying
-auditLogSchema.index({ action: 1, timestamp: -1 });
-auditLogSchema.index({ user: 1, timestamp: -1 });
-auditLogSchema.index({ action: 1, user: 1, timestamp: -1 });
-auditLogSchema.index({ timestamp: -1 }); // For general time-based queries
-
-// TTL index - optional: auto-delete logs after certain period (e.g., 1 year)
-// auditLogSchema.index({ timestamp: 1 }, { expireAfterSeconds: 365 * 24 * 60 * 60 });
 
 export const AuditLog = mongoose.model<IAuditLog>('AuditLog', auditLogSchema);

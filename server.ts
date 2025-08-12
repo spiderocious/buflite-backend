@@ -26,7 +26,7 @@ if (!process.env.DB_TYPE) {
 // Log startup information
 console.info('🚀 Starting Backend Template Server...');
 logger.info(`📋 Environment: ${envPath}`);
-logger.info(`📁 Loaded envsss from: ${envFile}`);
+logger.info(`📁 Loaded envs from: ${envFile}`);
 
 // ADD PROCESS MONITORING HERE
 process.on('exit', (code) => {

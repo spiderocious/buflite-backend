@@ -41,7 +41,6 @@ const trendsSchema = new Schema<Trends>(
   }
 );
 
-trendsSchema.index({ id: 1 }, { unique: true });
 trendsSchema.index({ createdAt: -1 }); // Index for sorting by creation date
 trendsSchema.index({ modelName: 1 }); // Index for model name queries
 

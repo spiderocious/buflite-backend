@@ -75,7 +75,7 @@ export class DashboardService {
     });
     if (data) {
       const parsedData = {
-        ...data,
+        ...data?.data,
         cached: false,
         requestDate: new Date().toISOString(),
       };

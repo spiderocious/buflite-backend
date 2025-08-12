@@ -723,7 +723,7 @@ export const videoAnalysisMock = {
   analysisId: 'V4VHMPA3M1',
 }
 
-export const dashboardMock = {
+export const dashboardMockOld = {
   nigeria: {
     trending_topics: [
       {
@@ -1290,3 +1290,756 @@ export const dashboardMock = {
     },
   },
 };
+
+export const dashboardMock = {
+  "ng": {
+    "trending_topics": [
+      {
+        "topic": "Wizkid",
+        "platforms": ["twitter", "tiktok"],
+        "engagement_score": 0.8,
+        "trend_velocity": "stable",
+        "demographics": ["18-24", "25-34"],
+        "content_types": ["video", "image", "text"],
+        "duration_prediction": "days"
+      },
+      {
+        "topic": "KWAM 1",
+        "platforms": ["twitter"],
+        "engagement_score": 0.7,
+        "trend_velocity": "rising",
+        "demographics": ["25-34", "35-44"],
+        "content_types": ["text", "video"],
+        "duration_prediction": "hours"
+      },
+      {
+        "topic": "Afrobeats",
+        "platforms": ["tiktok", "instagram", "twitter"],
+        "engagement_score": 0.85,
+        "trend_velocity": "stable",
+        "demographics": ["18-24", "25-34"],
+        "content_types": ["video", "image"],
+        "duration_prediction": "weeks"
+      },
+      {
+        "topic": "BBNaija",
+        "platforms": ["twitter", "instagram", "tiktok"],
+        "engagement_score": 0.75,
+        "trend_velocity": "stable",
+        "demographics": ["18-24", "25-34"],
+        "content_types": ["video", "image", "text"],
+        "duration_prediction": "days"
+      }
+    ],
+    "hashtags": {
+      "twitter": [
+        {
+          "tag": "#NoOnesAirdrop",
+          "volume": 25000,
+          "engagement_rate": 0.65,
+          "related_topics": ["crypto", "airdrops"]
+        },
+        {
+          "tag": "#BallonDor",
+          "volume": 18000,
+          "engagement_rate": 0.7,
+          "related_topics": ["football", "awards"]
+        },
+        {
+          "tag": "#Nigeria",
+          "volume": 45000,
+          "engagement_rate": 0.8,
+          "related_topics": ["naija", "lagos", "abuja"]
+        }
+      ],
+      "instagram": [
+        {
+          "tag": "#naija",
+          "posts_count": 2500000,
+          "engagement_rate": 0.78,
+          "content_type": "reels"
+        },
+        {
+          "tag": "#lagos",
+          "posts_count": 1800000,
+          "engagement_rate": 0.82,
+          "content_type": "posts"
+        },
+        {
+          "tag": "#bellanaija",
+          "posts_count": 850000,
+          "engagement_rate": 0.72,
+          "content_type": "posts"
+        }
+      ],
+      "tiktok": [
+        {
+          "tag": "#nigeriantiktok",
+          "views": 5200000000,
+          "trend_score": 0.85,
+          "music_associated": true
+        },
+        {
+          "tag": "#afrobeats",
+          "views": 8900000000,
+          "trend_score": 0.92,
+          "music_associated": true
+        },
+        {
+          "tag": "#jollofrice",
+          "views": 245000000,
+          "trend_score": 0.68,
+          "music_associated": false
+        }
+      ],
+      "linkedin": [
+        {
+          "tag": "#NigerianBusiness",
+          "professional_relevance": 0.85,
+          "industry": "technology",
+          "engagement_type": "discussion"
+        }
+      ]
+    },
+    "content_insights": {
+      "viral_formats": [
+        {
+          "format": "Afrobeats Dance Challenges",
+          "platforms": ["tiktok", "instagram"],
+          "success_rate": 0.78,
+          "key_elements": [
+            "trending_music",
+            "choreography",
+            "group_participation"
+          ]
+        },
+        {
+          "format": "Nigerian Comedy Skits",
+          "platforms": ["tiktok", "instagram", "twitter"],
+          "success_rate": 0.82,
+          "key_elements": [
+            "local_humor",
+            "relatable_situations",
+            "quick_punchlines"
+          ]
+        }
+      ],
+      "peak_posting_times": [
+        {
+          "platform": "twitter",
+          "time": "19:00",
+          "timezone": "WAT",
+          "engagement_boost": 0.65
+        },
+        {
+          "platform": "instagram",
+          "time": "18:30",
+          "timezone": "WAT",
+          "engagement_boost": 0.72
+        },
+        {
+          "platform": "tiktok",
+          "time": "20:00",
+          "timezone": "WAT",
+          "engagement_boost": 0.78
+        }
+      ],
+      "content_gaps": [
+        {
+          "topic": "Nigerian Tech Startups",
+          "opportunity_score": 0.85,
+          "suggested_angle": "Behind-the-scenes startup journey content"
+        },
+        {
+          "topic": "Traditional Nigerian Cuisine Tutorials",
+          "opportunity_score": 0.75,
+          "suggested_angle": "Modern takes on traditional recipes"
+        }
+      ]
+    },
+    "platform_updates": [
+      {
+        "platform": "tiktok",
+        "update_type": "algorithm",
+        "impact_on_creators": "positive",
+        "adaptation_strategy": "Focus on longer-form content and authentic storytelling"
+      }
+    ],
+    "creator_opportunities": [
+      {
+        "niche": "Afrobeats Music",
+        "demand_level": 0.9,
+        "competition_level": 0.7,
+        "monetization_potential": 0.85,
+        "recommended_platforms": ["tiktok", "instagram", "youtube"]
+      },
+      {
+        "niche": "Nigerian Fashion",
+        "demand_level": 0.8,
+        "competition_level": 0.6,
+        "monetization_potential": 0.75,
+        "recommended_platforms": ["instagram", "tiktok"]
+      }
+    ],
+    "regional_specifics": {
+      "local_trends": [
+        {
+          "trend": "Naija No Dey Carry Last",
+          "cultural_context": "Nigerian pride and achievement celebration",
+          "local_relevance": 0.9
+        }
+      ],
+      "language_preferences": [
+        {
+          "language": "English",
+          "platform_preference": "all",
+          "content_performance": 0.85
+        },
+        {
+          "language": "Pidgin English",
+          "platform_preference": "tiktok",
+          "content_performance": 0.92
+        }
+      ],
+      "time_zones": {
+        "peak_activity": "19:00",
+        "weekend_patterns": "different",
+        "holiday_impact": "significant increase during festivals"
+      }
+    },
+    "analysis_metadata": {
+      "analyzed_at": "2025-08-10T11:54:31.045Z",
+      "data_sources": ["twitter_api", "instagram_insights", "tiktok_analytics"],
+      "confidence_level": 0.82,
+      "next_update_recommended": "2025-08-11T11:54:31.045Z",
+      "geographic_scope": "Nigeria"
+    },
+    "forecasts": {
+      "trends": [
+        {
+          "trend": "Afrobeats Fusion with Global Genres",
+          "probability": 0.85,
+          "timeframe": "next_week"
+        }
+      ],
+      "events": [
+        {
+          "event": "Nigerian Independence Day Content Surge",
+          "predicted_date": "2025-10-01",
+          "impact_score": 0.9
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#NaijaToTheWorld",
+          "growth_prediction": 0.75,
+          "platforms": ["tiktok", "instagram"]
+        }
+      ]
+    }
+  },
+  "uk": {
+    "trending_topics": [
+      {
+        "topic": "Mings",
+        "platforms": ["twitter"],
+        "engagement_score": 0.72,
+        "trend_velocity": "rising",
+        "demographics": ["25-34", "35-44"],
+        "content_types": ["text"],
+        "duration_prediction": "hours"
+      },
+      {
+        "topic": "Palestine Action",
+        "platforms": ["twitter"],
+        "engagement_score": 0.78,
+        "trend_velocity": "stable",
+        "demographics": ["18-24", "25-34", "35-44"],
+        "content_types": ["text", "image"],
+        "duration_prediction": "days"
+      },
+      {
+        "topic": "Wrexham",
+        "platforms": ["twitter"],
+        "engagement_score": 0.68,
+        "trend_velocity": "stable",
+        "demographics": ["25-34", "35-44"],
+        "content_types": ["text", "video"],
+        "duration_prediction": "hours"
+      }
+    ],
+    "hashtags": {
+      "twitter": [
+        {
+          "tag": "#sundayvibes",
+          "volume": 35000,
+          "engagement_rate": 0.62,
+          "related_topics": ["weekend", "relaxation"]
+        },
+        {
+          "tag": "#SundayYellow",
+          "volume": 15000,
+          "engagement_rate": 0.58,
+          "related_topics": ["fashion", "color_trend"]
+        },
+        {
+          "tag": "#Summertime",
+          "volume": 28000,
+          "engagement_rate": 0.65,
+          "related_topics": ["summer", "weather"]
+        }
+      ],
+      "instagram": [
+        {
+          "tag": "#london",
+          "posts_count": 45000000,
+          "engagement_rate": 0.75,
+          "content_type": "posts"
+        },
+        {
+          "tag": "#uk",
+          "posts_count": 18500000,
+          "engagement_rate": 0.68,
+          "content_type": "reels"
+        },
+        {
+          "tag": "#british",
+          "posts_count": 8200000,
+          "engagement_rate": 0.72,
+          "content_type": "posts"
+        }
+      ],
+      "tiktok": [
+        {
+          "tag": "#ukcomedy",
+          "views": 2500000000,
+          "trend_score": 0.82,
+          "music_associated": false
+        },
+        {
+          "tag": "#britishhumour",
+          "views": 1800000000,
+          "trend_score": 0.78,
+          "music_associated": false
+        }
+      ],
+      "linkedin": [
+        {
+          "tag": "#UKBusiness",
+          "professional_relevance": 0.88,
+          "industry": "finance",
+          "engagement_type": "discussion"
+        }
+      ]
+    },
+    "content_insights": {
+      "viral_formats": [
+        {
+          "format": "British Comedy Observations",
+          "platforms": ["tiktok", "instagram"],
+          "success_rate": 0.85,
+          "key_elements": [
+            "dry_humor",
+            "cultural_references",
+            "accent_authenticity"
+          ]
+        },
+        {
+          "format": "UK Weather Commentary",
+          "platforms": ["twitter", "tiktok"],
+          "success_rate": 0.72,
+          "key_elements": ["weather_updates", "sarcasm", "relatability"]
+        }
+      ],
+      "peak_posting_times": [
+        {
+          "platform": "twitter",
+          "time": "18:00",
+          "timezone": "GMT",
+          "engagement_boost": 0.68
+        },
+        {
+          "platform": "instagram",
+          "time": "19:30",
+          "timezone": "GMT",
+          "engagement_boost": 0.75
+        },
+        {
+          "platform": "tiktok",
+          "time": "20:00",
+          "timezone": "GMT",
+          "engagement_boost": 0.8
+        }
+      ],
+      "content_gaps": [
+        {
+          "topic": "UK Small Business Stories",
+          "opportunity_score": 0.78,
+          "suggested_angle": "Local business spotlight with community impact"
+        },
+        {
+          "topic": "British Cultural Heritage",
+          "opportunity_score": 0.72,
+          "suggested_angle": "Modern interpretations of traditional British culture"
+        }
+      ]
+    },
+    "platform_updates": [
+      {
+        "platform": "instagram",
+        "update_type": "feature",
+        "impact_on_creators": "positive",
+        "adaptation_strategy": "Utilize new carousel analytics for better content optimization"
+      }
+    ],
+    "creator_opportunities": [
+      {
+        "niche": "British Lifestyle",
+        "demand_level": 0.82,
+        "competition_level": 0.65,
+        "monetization_potential": 0.78,
+        "recommended_platforms": ["instagram", "tiktok", "youtube"]
+      },
+      {
+        "niche": "UK Travel & Tourism",
+        "demand_level": 0.75,
+        "competition_level": 0.58,
+        "monetization_potential": 0.8,
+        "recommended_platforms": ["instagram", "tiktok"]
+      }
+    ],
+    "regional_specifics": {
+      "local_trends": [
+        {
+          "trend": "Sunday Roast Revival",
+          "cultural_context": "Traditional British Sunday dinner making comeback",
+          "local_relevance": 0.85
+        }
+      ],
+      "language_preferences": [
+        {
+          "language": "English",
+          "platform_preference": "all",
+          "content_performance": 0.9
+        }
+      ],
+      "time_zones": {
+        "peak_activity": "19:00",
+        "weekend_patterns": "similar",
+        "holiday_impact": "moderate increase during bank holidays"
+      }
+    },
+    "analysis_metadata": {
+      "analyzed_at": "2025-08-10T11:54:31.045Z",
+      "data_sources": ["twitter_api", "instagram_insights", "tiktok_analytics"],
+      "confidence_level": 0.79,
+      "next_update_recommended": "2025-08-11T11:54:31.045Z",
+      "geographic_scope": "United Kingdom"
+    },
+    "forecasts": {
+      "trends": [
+        {
+          "trend": "Eco-Friendly British Lifestyle",
+          "probability": 0.82,
+          "timeframe": "next_week"
+        }
+      ],
+      "events": [
+        {
+          "event": "Premier League Season Return Content Surge",
+          "predicted_date": "2025-08-17",
+          "impact_score": 0.88
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#SustainableUK",
+          "growth_prediction": 0.78,
+          "platforms": ["instagram", "tiktok"]
+        }
+      ]
+    }
+  },
+  "us": {
+    "trending_topics": [
+      {
+        "topic": "Homestuck",
+        "platforms": ["twitter"],
+        "engagement_score": 0.85,
+        "trend_velocity": "rising",
+        "demographics": ["18-24", "25-34"],
+        "content_types": ["text", "image"],
+        "duration_prediction": "hours"
+      },
+      {
+        "topic": "#ATEEZinLA",
+        "platforms": ["twitter"],
+        "engagement_score": 0.92,
+        "trend_velocity": "rising",
+        "demographics": ["18-24"],
+        "content_types": ["video", "image"],
+        "duration_prediction": "hours"
+      },
+      {
+        "topic": "#UFCVegas109",
+        "platforms": ["twitter"],
+        "engagement_score": 0.88,
+        "trend_velocity": "stable",
+        "demographics": ["25-34", "35-44"],
+        "content_types": ["video", "text"],
+        "duration_prediction": "hours"
+      }
+    ],
+    "hashtags": {
+      "twitter": [
+        {
+          "tag": "#WeWantScarlett",
+          "volume": 42000,
+          "engagement_rate": 0.78,
+          "related_topics": ["marvel", "entertainment"]
+        },
+        {
+          "tag": "#Toonami",
+          "volume": 28000,
+          "engagement_rate": 0.72,
+          "related_topics": ["anime", "cartoons"]
+        }
+      ],
+      "instagram": [
+        {
+          "tag": "#usa",
+          "posts_count": 85000000,
+          "engagement_rate": 0.68,
+          "content_type": "posts"
+        },
+        {
+          "tag": "#america",
+          "posts_count": 35000000,
+          "engagement_rate": 0.72,
+          "content_type": "reels"
+        },
+        {
+          "tag": "#newyork",
+          "posts_count": 95000000,
+          "engagement_rate": 0.75,
+          "content_type": "posts"
+        }
+      ],
+      "tiktok": [
+        {
+          "tag": "#fyp",
+          "views": 79540000000000,
+          "trend_score": 0.95,
+          "music_associated": false
+        },
+        {
+          "tag": "#foryou",
+          "views": 45000000000000,
+          "trend_score": 0.92,
+          "music_associated": false
+        },
+        {
+          "tag": "#viral",
+          "views": 38500000000000,
+          "trend_score": 0.88,
+          "music_associated": false
+        }
+      ],
+      "linkedin": [
+        {
+          "tag": "#USBusiness",
+          "professional_relevance": 0.85,
+          "industry": "technology",
+          "engagement_type": "networking"
+        }
+      ]
+    },
+    "content_insights": {
+      "viral_formats": [
+        {
+          "format": "Get Ready With Me",
+          "platforms": ["tiktok", "instagram"],
+          "success_rate": 0.82,
+          "key_elements": [
+            "morning_routine",
+            "product_placement",
+            "personality"
+          ]
+        },
+        {
+          "format": "Day in the Life",
+          "platforms": ["tiktok", "instagram"],
+          "success_rate": 0.78,
+          "key_elements": ["authenticity", "relatability", "lifestyle_glimpse"]
+        },
+        {
+          "format": "Storytime",
+          "platforms": ["tiktok"],
+          "success_rate": 0.85,
+          "key_elements": [
+            "personal_narrative",
+            "emotional_hooks",
+            "dramatic_pacing"
+          ]
+        }
+      ],
+      "peak_posting_times": [
+        {
+          "platform": "twitter",
+          "time": "21:00",
+          "timezone": "EST",
+          "engagement_boost": 0.72
+        },
+        {
+          "platform": "instagram",
+          "time": "19:00",
+          "timezone": "EST",
+          "engagement_boost": 0.78
+        },
+        {
+          "platform": "tiktok",
+          "time": "20:30",
+          "timezone": "EST",
+          "engagement_boost": 0.82
+        }
+      ],
+
+      "content_gaps": [
+        {
+          "topic": "Mental Health Awareness for Gen Z",
+          "opportunity_score": 0.88,
+          "suggested_angle": "Authentic storytelling about mental wellness journeys with practical tips"
+        },
+        {
+          "topic": "Sustainable Living Practices",
+          "opportunity_score": 0.82,
+          "suggested_angle": "Easy eco-friendly swaps and climate action for everyday Americans"
+        },
+        {
+          "topic": "Financial Literacy for Young Adults",
+          "opportunity_score": 0.85,
+          "suggested_angle": "Digestible personal finance education and money management tips"
+        }
+      ]
+    },
+    "platform_updates": [
+      {
+        "platform": "tiktok",
+        "update_type": "algorithm",
+        "impact_on_creators": "positive",
+        "adaptation_strategy": "Focus on longer-form storytelling content and authentic engagement"
+      },
+      {
+        "platform": "instagram",
+        "update_type": "feature",
+        "impact_on_creators": "positive",
+        "adaptation_strategy": "Utilize new carousel analytics and enhanced Reels features"
+      }
+    ],
+    "creator_opportunities": [
+      {
+        "niche": "AI and Technology Education",
+        "demand_level": 0.92,
+        "competition_level": 0.68,
+        "monetization_potential": 0.89,
+        "recommended_platforms": ["tiktok", "youtube", "instagram"]
+      },
+      {
+        "niche": "Wellness and Self-Care",
+        "demand_level": 0.86,
+        "competition_level": 0.75,
+        "monetization_potential": 0.82,
+        "recommended_platforms": ["instagram", "tiktok", "youtube"]
+      },
+      {
+        "niche": "Finance and Investment Education",
+        "demand_level": 0.88,
+        "competition_level": 0.72,
+        "monetization_potential": 0.91,
+        "recommended_platforms": ["tiktok", "youtube", "instagram"]
+      }
+    ],
+    "regional_specifics": {
+      "local_trends": [
+        {
+          "trend": "Climate Action for Young Americans",
+          "cultural_context": "Gen Z leading environmental advocacy and sustainable lifestyle adoption",
+          "local_relevance": 0.87
+        },
+        {
+          "trend": "AI Transparency Movement",
+          "cultural_context": "Creators openly sharing AI prompts and tools used in content creation",
+          "local_relevance": 0.83
+        }
+      ],
+      "language_preferences": [
+        {
+          "language": "English",
+          "platform_preference": "all",
+          "content_performance": 0.92
+        },
+        {
+          "language": "Spanish",
+          "platform_preference": "tiktok",
+          "content_performance": 0.85
+        }
+      ],
+      "time_zones": {
+        "peak_activity": "20:30",
+        "weekend_patterns": "different",
+        "holiday_impact": "significant increase during federal holidays and cultural moments"
+      }
+    },
+    "analysis_metadata": {
+      "analyzed_at": "2025-08-10T11:54:31.045Z",
+      "data_sources": [
+        "twitter_api",
+        "instagram_insights",
+        "tiktok_analytics",
+        "youtube_analytics"
+      ],
+      "confidence_level": 0.84,
+      "next_update_recommended": "2025-08-11T11:54:31.045Z",
+      "geographic_scope": "United States"
+    },
+    "forecasts": {
+      "trends": [
+        {
+          "trend": "AI-Human Collaboration Content",
+          "probability": 0.89,
+          "timeframe": "next_week"
+        },
+        {
+          "trend": "Interactive Storytelling Formats",
+          "probability": 0.82,
+          "timeframe": "next_week"
+        }
+      ],
+      "events": [
+        {
+          "event": "Back-to-School Content Surge",
+          "predicted_date": "2025-08-25",
+          "impact_score": 0.85
+        },
+        {
+          "event": "Labor Day Weekend Travel Content",
+          "predicted_date": "2025-08-29",
+          "impact_score": 0.78
+        }
+      ],
+      "tags": [
+        {
+          "tag": "#BackToSchool2025",
+          "growth_prediction": 0.88,
+          "platforms": ["tiktok", "instagram"]
+        },
+        {
+          "tag": "#AITransparency",
+          "growth_prediction": 0.82,
+          "platforms": ["tiktok", "instagram", "twitter"]
+        }
+      ]
+    }
+  }
+}
+

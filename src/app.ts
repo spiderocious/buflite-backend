@@ -20,6 +20,11 @@ class App {
     this.app = express();
     this.port = config.app.port;
 
+    // Set server timeout to 5 minutes (300000 ms)
+    // Note: This only works if you use http.createServer(app) in your server entry point
+    // For most setups, you can set it here and it will be picked up in server.ts
+    (this.app as any).timeout = 300000;
+
     // Initialize the application
     this.initializeConfig();
     this.initializeMiddleware();

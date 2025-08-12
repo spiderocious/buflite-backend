@@ -14,6 +14,7 @@ import {
   AnthropicConfig,
   RequestStatus,
 } from './types';
+import logger from '../../../../utils/logger';
 
 export { RequestStatus } from './types';
 
@@ -56,33 +57,32 @@ export class AnthropicService {
   ): Promise<string> {
     const useTooling = options?.useTooling || false;
     const tools = useTooling ? this.getTooling() : {};
+    console.log(`used mock: ${config.ai.anthropic.mock}`);
     if (config.ai.anthropic.mock) {
       return this.getMockResponse(options.contentType || PromptType.CONTENT);
     }
-    try {
-      const response = await this.anthropic.messages.create({
-        model: this.config.model,
-        max_tokens: this.config.maxTokens,
-        temperature: this.config.temperature,
-        system,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: prompt,
-              },
-            ],
-          },
-        ],
-        ...{ ...tools },
-      });
 
-      return response?.content?.[0]?.text || '';
-    } catch (error) {
-      throw new Error('Failed to generate response from AI service');
-    }
+    const response = await this.anthropic.beta.messages.create({
+      model: this.config.model,
+      max_tokens: this.config.maxTokens,
+      temperature: this.config.temperature,
+      system,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: prompt,
+            },
+          ],
+        },
+      ],
+      ...{ ...tools },
+    });
+    await this.logUsage({} as any, RequestStatus.ANTHROPIC_RESPONSE, response, response);
+    const textContent = response?.content?.find((item: any) => item.type === 'text')?.text;
+    return textContent || '';
   }
 
   async getMockResponse(type: PromptType): Promise<string> {
@@ -145,6 +145,13 @@ export class AnthropicService {
         useTooling,
         contentType,
       });
+
+      await this.logUsage(context, RequestStatus.ANTHROPIC_RESULT, content, {
+        response,
+        prompt,
+        analysisId,
+        cached: false,
+      });
       const parsedResponse = JSON.parse(response);
 
       const chatData = {
@@ -161,6 +168,7 @@ export class AnthropicService {
 
       const result: AnalysisResult = {
         ...chatData,
+        data: parsedResponse,
         analysisId,
       };
 
@@ -182,9 +190,10 @@ export class AnthropicService {
     } catch (error: any) {
       // Log error
       await this.logUsage(context, RequestStatus.ANTHROPIC_ERROR, content, {
-        error: error?.message,
+        error: error,
         analysisId,
       });
+      logger.error('Anthropic analysis error:', error);
       throw new Error('Failed to analyze content');
     }
   }
